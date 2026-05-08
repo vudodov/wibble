@@ -1,0 +1,38 @@
+component InsightsPage
+
+use
+  import { appStore } from "../state/appStore.wib"
+  import Panel from "../components/Panel.wib"
+  import TripPlanner from "../components/TripPlanner.wib"
+
+state
+  localNotes: number = 0
+
+derived
+  selectedCity: string = appStore.selectedCity.get()
+  selectedCountry: string = appStore.selectedCountry.get()
+  favorites: string = appStore.favoritesLabel.get()
+  visitCount: number = appStore.visitCount.get()
+  notesLabel: string = `${localNotes} local notes`
+
+actions
+  addLocalNote()
+    localNotes = localNotes + 1
+
+  clearLocalNotes()
+    localNotes = 0
+
+view
+  section class "pageStack"
+    Panel label "Shared state" title selectedCity variant "widePanel"
+      slot actions
+        button on click -> addLocalNote
+          text "Add note"
+        button on click -> clearLocalNotes
+          text "Clear"
+      div class "metricGrid"
+        p text "Country {selectedCountry}"
+        p text "Selections {visitCount}"
+        p text "Favorites {favorites}"
+        p text "Local {notesLabel}"
+    TripPlanner

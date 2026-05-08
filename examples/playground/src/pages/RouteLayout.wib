@@ -1,0 +1,13 @@
+component RouteLayout
+
+props
+  path: string
+
+derived
+  routeLabel: string = path
+
+view
+  section class "routeFrame"
+    p class "routeMeta" text "Nested route {routeLabel}"
+    slot default
+      p text "No nested route selected"

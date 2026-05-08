@@ -1,0 +1,32 @@
+component WeatherMetrics
+
+use
+  import type { CityReport } from "../api/openApis"
+  import { compassDirection, numberLabel, weatherLabel } from "../api/openApis"
+
+props
+  data: CityReport | undefined
+
+derived
+  condition: string = weatherLabel(data?.weather.weatherCode)
+  temperature: string = numberLabel(data?.weather.temperature, "C")
+  feelsLike: string = numberLabel(data?.weather.apparentTemperature, "C")
+  humidity: string = numberLabel(data?.weather.humidity, "%")
+  wind: string = `${numberLabel(data?.weather.windSpeed, "km/h")} ${compassDirection(data?.weather.windDirection)}`
+  cloudCover: string = numberLabel(data?.weather.cloudCover, "%")
+  precipitation: string = numberLabel(data?.weather.precipitation, "mm")
+  daylight: string = data?.weather.isDay ? "Daylight" : "Night"
+
+view
+  section class "panel weatherPanel"
+    p class "panelLabel" text "Weather"
+    h2 text "{condition}"
+    div class "metricPrimary"
+      span text "{temperature}"
+      small text "feels like {feelsLike}"
+    div class "metricGrid"
+      p text "Humidity {humidity}"
+      p text "Wind {wind}"
+      p text "Cloud {cloudCover}"
+      p text "Rain {precipitation}"
+      p text "Light {daylight}"

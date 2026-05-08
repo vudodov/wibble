@@ -1,0 +1,68 @@
+{
+  "name": "wibble-vscode",
+  "displayName": "Wibble",
+  "version": "0.0.0",
+  "description": "VS Code language support for Wibble .wib files.",
+  "type": "commonjs",
+  "main": "./extension.js",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:wibble"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "wibble",
+        "aliases": [
+          "Wibble",
+          "wib"
+        ],
+        "extensions": [
+          ".wib"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "wibble",
+        "scopeName": "source.wibble",
+        "path": "./syntaxes/wibble.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "wibble",
+        "path": "./snippets/wibble.json"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "node -e \"console.log('VS Code extension assets are static')\"",
+    "check": "node -e \"console.log('No VS Code extension typecheck yet')\"",
+    "test": "node -e \"console.log('No VS Code extension tests yet')\""
+  },
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wibble-js/wibble-js.git",
+    "directory": "packages/vscode"
+  },
+  "homepage": "https://github.com/wibble-js/wibble-js#readme",
+  "bugs": {
+    "url": "https://github.com/wibble-js/wibble-js/issues"
+  },
+  "keywords": [
+    "wibble",
+    "typescript",
+    "framework",
+    "spa",
+    "compiler"
+  ],
+  "private": true
+}

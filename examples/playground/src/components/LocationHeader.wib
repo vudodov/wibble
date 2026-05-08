@@ -1,0 +1,24 @@
+component LocationHeader
+
+use
+  import type { CityReport } from "../api/openApis"
+  import { locationSubtitle, locationTitle } from "../api/openApis"
+
+props
+  data: CityReport | undefined
+  selectedCity: string
+  status: string
+
+derived
+  title: string = locationTitle(data, selectedCity)
+  subtitle: string = locationSubtitle(data)
+
+view
+  section class "hero"
+    div class "heroCopy"
+      p class "eyebrow" text "Open API workbench"
+      h1 text "{title}"
+      p class "subtitle" text "{subtitle}"
+    div class "statusPill"
+      span text "resource"
+      strong text "{status}"

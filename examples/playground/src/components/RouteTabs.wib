@@ -1,0 +1,52 @@
+component RouteTabs
+
+use
+  import { currentPath, currentRouteName, navigateTo, routeResourceStatus } from "../routing"
+  import { appStore } from "../state/appStore.wib"
+
+derived
+  path: string = currentPath()
+  routeName: string = currentRouteName()
+  routeStatus: string = routeResourceStatus()
+  routeChanges: number = appStore.routeChanges.get()
+
+actions
+  showWeather()
+    navigateTo("/")
+
+  showCountry()
+    navigateTo("/country")
+
+  showInsights()
+    navigateTo("/insights")
+
+  showTrace()
+    navigateTo("/trace")
+
+  showSelectedCity()
+    navigateTo(`/city/${encodeURIComponent(appStore.selectedCity.get())}`)
+
+  showLazy()
+    navigateTo("/lazy")
+
+  showLegacy()
+    navigateTo("/legacy")
+
+view
+  nav class "routeTabs"
+    div class "tabButtons"
+      button on click -> showWeather
+        text "Weather"
+      button on click -> showCountry
+        text "Country"
+      button on click -> showInsights
+        text "Insights"
+      button on click -> showTrace
+        text "Trace"
+      button on click -> showSelectedCity
+        text "City param"
+      button on click -> showLazy
+        text "Lazy"
+      button on click -> showLegacy
+        text "Redirect"
+    p class "routeMeta" text "{routeName} {path} loader {routeStatus} changes {routeChanges}"

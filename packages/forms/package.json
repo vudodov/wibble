@@ -1,0 +1,51 @@
+{
+  "name": "@wibble/forms",
+  "version": "0.0.0",
+  "description": "Form state and DOM bindings for Wibble.",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "clean": "node ../../scripts/clean-dist.mjs",
+    "build": "pnpm run clean && tsc -p tsconfig.json --emitDeclarationOnly && tsup src/index.ts --format esm",
+    "check": "tsc -b tsconfig.json --pretty false",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@wibble/core": "workspace:*"
+  },
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wibble-js/wibble-js.git",
+    "directory": "packages/forms"
+  },
+  "homepage": "https://github.com/wibble-js/wibble-js#readme",
+  "bugs": {
+    "url": "https://github.com/wibble-js/wibble-js/issues"
+  },
+  "keywords": [
+    "wibble",
+    "typescript",
+    "framework",
+    "spa",
+    "compiler"
+  ],
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,24 @@
+component CountryPage
+
+use
+  import { loadCityReport } from "../api/openApis"
+  import { appStore } from "../state/appStore.wib"
+  import CountryPanel from "../components/CountryPanel.wib"
+  import ApiTrace from "../components/ApiTrace.wib"
+
+resource report
+  key: ["country-page", appStore.selectedCity.get()]
+  load: loadCityReport(appStore.selectedCity.get(), abortSignal)
+
+derived
+  selectedCountry: string = appStore.selectedCountry.get()
+  selectedCity: string = appStore.selectedCity.get()
+
+view
+  section class "pageStack"
+    section class "panel widePanel"
+      p class "panelLabel" text "Selection"
+      h2 text "{selectedCountry}"
+      p text "Current city {selectedCity}"
+    CountryPanel data report.data
+    ApiTrace data report.data status report.status refreshing report.refreshing error report.error

@@ -1,0 +1,57 @@
+component TripPlanner
+
+use
+  import { createField, createForm } from "@wibble/forms"
+  import type { Field, Form } from "@wibble/forms"
+  import { cityNameLength, cleanCityName, requiredCity } from "../state/formHelpers"
+  import { appStore } from "../state/appStore.wib"
+
+state
+  cityField: Field<string> = createField(appStore.selectedCity.get(), [requiredCity, cityNameLength])
+  notifyField: Field<boolean> = createField(true)
+  form: Form<{ city: Field<string>; notify: Field<boolean> }> = createForm({ city: cityField, notify: notifyField })
+  submitted: boolean = false
+
+derived
+  cityValue: string = cityField.value.get()
+  errorText: string = cityField.error.get() ?? ""
+  touched: boolean = cityField.touched.get()
+  isValid: boolean = form.valid.get()
+  notifyLabel: string = notifyField.value.get() ? "Route notes enabled" : "Route notes disabled"
+  preview: string = cleanCityName(cityValue)
+
+actions
+  submit()
+    form.touchAll()
+    if (form.valid.get()) {
+      appStore.selectCity(cleanCityName(cityField.value.get()))
+      submitted = true
+    }
+
+  reset()
+    cityField.reset(appStore.selectedCity.get())
+    notifyField.reset(true)
+    submitted = false
+
+view
+  section class "panel formPanel"
+    p class "panelLabel" text "Forms"
+    h2 text "Plan another city"
+    div class "formGrid"
+      label
+        span text "City"
+        input bind value cityField placeholder "Try Lisbon"
+      label class "checkboxRow"
+        input type "checkbox" bind checked notifyField
+        span text "{notifyLabel}"
+    if touched && errorText
+      p class "formError" text "{errorText}"
+    else if submitted
+      p class "formSuccess" text "Selected {preview}"
+    else
+      p class "formHint" text "Form valid {isValid}"
+    div class "buttonRow"
+      button on click -> submit
+        text "Apply city"
+      button on click -> reset
+        text "Reset"

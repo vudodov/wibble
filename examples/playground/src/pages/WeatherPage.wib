@@ -1,0 +1,49 @@
+component WeatherPage
+
+use
+  import { loadCityReport } from "../api/openApis"
+  import { appStore } from "../state/appStore.wib"
+  import WeatherMetrics from "../components/WeatherMetrics.wib"
+  import CountryPanel from "../components/CountryPanel.wib"
+  import ApiTrace from "../components/ApiTrace.wib"
+
+resource report
+  key: ["weather-page", appStore.selectedCity.get()]
+  load: loadCityReport(appStore.selectedCity.get(), abortSignal)
+  staleTime: 30000
+  retry: 1
+  refetchOnWindowFocus: true
+
+actions
+  async refresh()
+    invalidate report
+
+view
+  section class "dashboard"
+    if report.loading
+      section class "panel weatherPanel"
+        p class "panelLabel" text "Weather"
+        h2 text "Loading forecast data"
+        p class "formHint" text "Waiting for Open-Meteo"
+    else if report.error
+      section class "panel weatherPanel"
+        p class "panelLabel" text "Weather"
+        h2 text "Request failed"
+        p class "formError" text "{report.error}"
+    else
+      WeatherMetrics data report.data
+    if report.loading
+      section class "panel countryPanel"
+        p class "panelLabel" text "Country"
+        h2 text "Loading country metadata"
+        p class "formHint" text "Waiting for REST Countries"
+    else if report.error
+      section class "panel countryPanel"
+        p class "panelLabel" text "Country"
+        h2 text "Country request failed"
+        p class "formError" text "{report.error}"
+    else
+      CountryPanel data report.data
+    ApiTrace data report.data status report.status refreshing report.refreshing error report.error
+    button class "inlineAction" on click -> refresh
+      text "Refresh page data"

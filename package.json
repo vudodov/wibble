@@ -1,0 +1,38 @@
+{
+  "name": "wibble-js",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Wibble is an experimental TypeScript-first SPA framework with a manifest-like DSL and fine-grained rendering.",
+  "type": "module",
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "build": "pnpm -r build",
+    "check": "tsc -p tsconfig.check.json --pretty false",
+    "test": "pnpm -r test",
+    "format": "pnpm --filter @wibble/cli wibble format .",
+    "playground": "pnpm --filter @wibble/playground dev",
+    "clean": "pnpm -r --if-present clean",
+    "ci": "pnpm check && pnpm test && pnpm build",
+    "release:version": "node scripts/prepare-release.mjs",
+    "release:dry-run": "pnpm build && node scripts/publish-packages.mjs --dry-run",
+    "release:publish": "node scripts/publish-packages.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "@vitest/browser": "^2.1.8",
+    "playwright": "^1.49.1",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3",
+    "vitest": "^2.1.8"
+  },
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wibble-js/wibble-js.git"
+  },
+  "homepage": "https://github.com/wibble-js/wibble-js#readme",
+  "bugs": {
+    "url": "https://github.com/wibble-js/wibble-js/issues"
+  }
+}

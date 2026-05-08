@@ -1,0 +1,23 @@
+{
+  "name": "@wibble/playground",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "check": "tsc -b tsconfig.json --pretty false",
+    "test": "node -e \"console.log('No playground tests yet')\""
+  },
+  "dependencies": {
+    "@wibble/core": "workspace:*",
+    "@wibble/forms": "workspace:*",
+    "@wibble/router": "workspace:*",
+    "@wibble/store": "workspace:*",
+    "@wibble/vite": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3"
+  }
+}

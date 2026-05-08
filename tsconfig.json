@@ -1,0 +1,16 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/store" },
+    { "path": "./packages/router" },
+    { "path": "./packages/compiler" },
+    { "path": "./packages/vite" },
+    { "path": "./packages/testing" },
+    { "path": "./packages/cli" },
+    { "path": "./packages/forms" },
+    { "path": "./packages/ssr" },
+    { "path": "./packages/devtools" },
+    { "path": "./packages/language-server" }
+  ]
+}

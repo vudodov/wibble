@@ -1,0 +1,410 @@
+:root {
+  color: #16201f;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #eef3f0;
+}
+
+body {
+  margin: 0;
+}
+
+button {
+  border: 1px solid #9fb0ad;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #16201f;
+  cursor: pointer;
+  font: inherit;
+  padding: 9px 12px;
+}
+
+button:hover {
+  background: #e5edeb;
+}
+
+.shell {
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 32px;
+}
+
+.shell.compact {
+  padding: 18px;
+}
+
+.hero,
+.cityBar,
+.dashboard,
+.routeTabs,
+.modeBar,
+.pageStack {
+  margin: 0 auto;
+  max-width: 1120px;
+}
+
+.hero {
+  align-items: end;
+  background: linear-gradient(135deg, #102c2b, #23504c 56%, #c5a259);
+  border-radius: 8px;
+  color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  min-height: 220px;
+  overflow: hidden;
+  padding: 28px;
+}
+
+.hero h1 {
+  font-size: 42px;
+  line-height: 1;
+  margin: 0;
+}
+
+.heroCopy {
+  max-width: 680px;
+}
+
+.eyebrow,
+.panelLabel {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.82);
+  margin: 12px 0 0;
+}
+
+.statusPill {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 8px;
+  display: grid;
+  gap: 4px;
+  min-width: 128px;
+  padding: 12px;
+}
+
+.statusPill span {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+}
+
+.cityBar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 16px 0;
+}
+
+.refreshButton {
+  background: #c5a259;
+  border-color: #ac8b43;
+  color: #16201f;
+  margin-left: auto;
+}
+
+.cityMeta {
+  color: #526360;
+  flex-basis: 100%;
+  font-size: 13px;
+  margin: 0;
+}
+
+.routeTabs {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  padding: 16px 0 0;
+}
+
+.tabButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.routeMeta {
+  color: #526360;
+  font-size: 13px;
+  margin: 0;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.modeBar {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 0 0 16px;
+}
+
+.modeBar p {
+  color: #526360;
+  margin: 0;
+}
+
+.dashboard {
+  align-items: stretch;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+}
+
+.pageStack {
+  display: grid;
+  gap: 16px;
+}
+
+.panel {
+  border: 1px solid #cbd8d4;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(26, 45, 42, 0.08);
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.panel h2 {
+  font-size: 24px;
+  line-height: 1.15;
+  margin: 0 0 14px;
+}
+
+.panelHeader {
+  align-items: start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.panelHeader h2 {
+  margin-bottom: 14px;
+}
+
+.panelActions {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.weatherPanel {
+  min-height: 340px;
+}
+
+.metricPrimary {
+  align-items: end;
+  display: flex;
+  gap: 12px;
+  margin: 16px 0 22px;
+}
+
+.metricPrimary span {
+  color: #23504c;
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.metricPrimary small {
+  color: #526360;
+  padding-bottom: 8px;
+}
+
+.metricGrid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.metricGrid p {
+  background: #f4f7f6;
+  border: 1px solid #e0e8e5;
+  border-radius: 6px;
+  margin: 0;
+  min-height: 42px;
+  overflow-wrap: anywhere;
+  padding: 10px;
+}
+
+.countryPanel,
+.tracePanel {
+  grid-column: 2;
+}
+
+.tracePanel {
+  font-size: 13px;
+}
+
+.widePanel {
+  min-height: 0;
+}
+
+.formPanel {
+  max-width: 720px;
+}
+
+.formGrid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.formGrid label {
+  display: grid;
+  gap: 6px;
+}
+
+.formGrid span {
+  color: #526360;
+  font-size: 13px;
+}
+
+input {
+  border: 1px solid #9fb0ad;
+  border-radius: 6px;
+  box-sizing: border-box;
+  color: #16201f;
+  font: inherit;
+  min-height: 40px;
+  padding: 8px 10px;
+}
+
+.checkboxRow {
+  align-content: center;
+  align-items: center;
+  grid-template-columns: auto minmax(0, 1fr);
+  min-width: 190px;
+}
+
+.checkboxRow input {
+  min-height: auto;
+}
+
+.formError,
+.formHint,
+.formSuccess {
+  border-radius: 6px;
+  margin: 12px 0 0;
+  overflow-wrap: anywhere;
+  padding: 10px;
+}
+
+.formError {
+  background: #fff0ed;
+  border: 1px solid #f0bbb0;
+  color: #8a2819;
+}
+
+.formHint {
+  background: #f4f7f6;
+  border: 1px solid #d9e4e0;
+  color: #526360;
+}
+
+.formSuccess {
+  background: #edf8f1;
+  border: 1px solid #b9dec7;
+  color: #1f6d3e;
+}
+
+.buttonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.routeFrame {
+  display: grid;
+  gap: 12px;
+}
+
+.traceRows {
+  display: grid;
+  gap: 8px;
+}
+
+.traceRows p {
+  background: #f8f4eb;
+  border: 1px solid #ebe0c9;
+  border-radius: 6px;
+  margin: 0;
+  overflow-wrap: anywhere;
+  padding: 10px;
+}
+
+.countryTopline {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.flag {
+  aspect-ratio: 4 / 3;
+  border: 1px solid #d4ddda;
+  border-radius: 6px;
+  object-fit: cover;
+  width: 84px;
+}
+
+.inlineAction {
+  align-self: start;
+  justify-self: start;
+}
+
+.buttonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+@media (max-width: 820px) {
+  .shell {
+    padding: 16px;
+  }
+
+  .hero {
+    align-items: start;
+    display: grid;
+    gap: 20px;
+    min-height: 0;
+  }
+
+  .hero h1 {
+    font-size: 34px;
+  }
+
+  .refreshButton {
+    margin-left: 0;
+  }
+
+  .routeTabs,
+  .modeBar {
+    align-items: stretch;
+    display: grid;
+  }
+
+  .routeMeta {
+    text-align: left;
+  }
+
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .countryPanel,
+  .tracePanel {
+    grid-column: auto;
+  }
+}

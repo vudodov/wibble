@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "packages/*/src/**/*.ts",
+    "packages/*/test/**/*.ts",
+    "examples/playground/src/**/*.ts",
+    "examples/playground/src/**/*.d.ts",
+    "examples/playground/vite.config.ts",
+    "packages/vscode/**/*.js"
+  ]
+}

@@ -1,0 +1,33 @@
+component App
+
+use
+  import { RouterOutlet } from "@wibble/router"
+  import { appRouter } from "./routing"
+  import { appStore } from "./state/appStore.wib"
+  import LocationHeader from "./components/LocationHeader.wib"
+  import CityControls from "./components/CityControls.wib"
+  import RouteTabs from "./components/RouteTabs.wib"
+
+state
+  compactMode: boolean = false
+
+derived
+  selectedCity: string = appStore.selectedCity.get()
+  selectedCountry: string = appStore.selectedCountry.get()
+  shellClass: string = compactMode ? "shell compact" : "shell"
+  status: string = appStore.lastRoute.get()
+
+actions
+  toggleDensity()
+    compactMode = !compactMode
+
+view
+  main class shellClass
+    LocationHeader data undefined selectedCity selectedCity status status
+    RouteTabs
+    CityControls
+    section class "modeBar"
+      p text "Shared selection {selectedCity} in {selectedCountry}"
+      button on click -> toggleDensity
+        text "Toggle density"
+    RouterOutlet router appRouter

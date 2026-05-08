@@ -1,0 +1,32 @@
+{
+  "Component": {
+    "prefix": "component",
+    "body": ["component ${1:Name}", "", "state", "  ${2:count}: number = 0", "", "view", "  section", "    text \"${3:Hello}\""],
+    "description": "Create a Wibble component"
+  },
+  "Resource": {
+    "prefix": "resource",
+    "body": ["resource ${1:data}", "  key: [\"${1:data}\"]", "  load: ${2:loadData}(abortSignal)"],
+    "description": "Create a Wibble resource"
+  },
+  "If Else": {
+    "prefix": "if",
+    "body": ["if ${1:condition}", "  ${2:p} text \"${3:Ready}\"", "else", "  ${4:p} text \"${5:Waiting}\""],
+    "description": "Create a reactive conditional"
+  },
+  "Keyed List": {
+    "prefix": "for",
+    "body": ["for ${1:item} in ${2:items} key ${3:item.id}", "  ${4:p} text \"{${1:item}.${5:name}}\""],
+    "description": "Create a keyed list"
+  },
+  "Slot": {
+    "prefix": "slot",
+    "body": ["slot ${1:actions}", "  ${2:button} text \"${3:Action}\""],
+    "description": "Create a named slot"
+  },
+  "Form Field": {
+    "prefix": "field",
+    "body": ["${1:input} bind value ${2:field} placeholder \"${3:Value}\""],
+    "description": "Bind a Wibble form field"
+  }
+}

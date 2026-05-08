@@ -1,0 +1,11 @@
+{
+  "scopeName": "source.wibble",
+  "patterns": [
+    { "match": "^(component|store)\\s+([A-Z][A-Za-z0-9_]*)", "captures": { "1": { "name": "keyword.declaration.wibble" }, "2": { "name": "entity.name.type.wibble" } } },
+    { "match": "^(props|state|derived|actions|effects|view|style|provide|use)$", "name": "keyword.section.wibble" },
+    { "match": "^resource\\s+([A-Za-z_][A-Za-z0-9_]*)", "captures": { "0": { "name": "keyword.section.wibble" }, "1": { "name": "entity.name.function.wibble" } } },
+    { "match": "\\b(if|else|for|key|slot|text|on|class|bind|invalidate)\\b", "name": "keyword.control.wibble" },
+    { "begin": "\"", "end": "\"", "name": "string.quoted.double.wibble" },
+    { "match": "#.*$", "name": "comment.line.number-sign.wibble" }
+  ]
+}
