@@ -1,0 +1,21 @@
+component Panel
+
+props
+  label: string
+  title: string
+  variant: string = ""
+
+derived
+  panelClass: string = variant ? `panel ${variant}` : "panel"
+
+view
+  section class panelClass
+    div class "panelHeader"
+      div
+        p class "panelLabel" text "{label}"
+        h2 text "{title}"
+      div class "panelActions"
+        slot actions
+          text ""
+    slot default
+      p text ""

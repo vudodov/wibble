@@ -1,0 +1,28 @@
+store AppStore
+
+use
+  import { countryForCity, favoritesLabelFor, routeChangeCount, toggleFavoriteCity } from "./storeHelpers"
+
+state
+  selectedCity: string = "Melbourne"
+  availableCities: string[] = ["Melbourne", "Tokyo", "Reykjavik", "Cape Town", "Lisbon", "Vancouver"]
+  favoriteCities: string[] = ["Melbourne"]
+  visitCount: number = 0
+  lastRoute: string = "/"
+  routeChanges: number = 0
+
+derived
+  selectedCountry: string = countryForCity(selectedCity)
+  favoritesLabel: string = favoritesLabelFor(favoriteCities)
+
+actions
+  selectCity(city: string)
+    selectedCity = city
+    visitCount = visitCount + 1
+
+  toggleFavorite()
+    favoriteCities = toggleFavoriteCity(favoriteCities, selectedCity)
+
+  recordRoute(path: string)
+    routeChanges = routeChangeCount(routeChanges, lastRoute, path)
+    lastRoute = path

@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "strict": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@wibble/core": ["packages/core/src/index.ts"],
+      "@wibble/store": ["packages/store/src/index.ts"],
+      "@wibble/router": ["packages/router/src/index.ts"],
+      "@wibble/compiler": ["packages/compiler/src/index.ts"],
+      "@wibble/testing": ["packages/testing/src/index.ts"],
+      "@wibble/vite": ["packages/vite/src/index.ts"],
+      "@wibble/cli": ["packages/cli/src/index.ts"],
+      "@wibble/forms": ["packages/forms/src/index.ts"],
+      "@wibble/http": ["packages/http/src/index.ts"],
+      "@wibble/ui": ["packages/ui/src/index.ts"],
+      "@wibble/ssr": ["packages/ssr/src/index.ts"],
+      "@wibble/devtools": ["packages/devtools/src/index.ts"],
+      "@wibble/language-server": ["packages/language-server/src/index.ts"]
+    },
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}

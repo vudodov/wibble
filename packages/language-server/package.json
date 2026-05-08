@@ -1,0 +1,51 @@
+{
+  "name": "@wibble/language-server",
+  "version": "0.1.0",
+  "description": "Lightweight language service helpers for Wibble .wib files.",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "clean": "node ../../scripts/clean-dist.mjs",
+    "build": "pnpm run clean && tsc -p tsconfig.json --emitDeclarationOnly && tsup src/index.ts --format esm",
+    "check": "tsc -b tsconfig.json --pretty false",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@wibble/compiler": "workspace:*"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vudodov/wibble.git",
+    "directory": "packages/language-server"
+  },
+  "homepage": "https://github.com/vudodov/wibble#readme",
+  "bugs": {
+    "url": "https://github.com/vudodov/wibble/issues"
+  },
+  "keywords": [
+    "wibble",
+    "typescript",
+    "framework",
+    "spa",
+    "compiler"
+  ],
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "engines": {
+    "node": ">=18"
+  }
+}

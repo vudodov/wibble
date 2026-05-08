@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "references": [{ "path": "../http" }, { "path": "../router" }, { "path": "../store" }],
+  "include": ["src"]
+}

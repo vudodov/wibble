@@ -1,0 +1,30 @@
+component ApiTrace
+
+use
+  import type { CityReport } from "../api/openApis"
+
+props
+  data: CityReport | undefined
+  status: string
+  refreshing: boolean
+  error: unknown
+
+derived
+  geocoding: string = data?.sources.geocodingUrl ?? "Waiting for a city selection"
+  forecast: string = data?.sources.forecastUrl ?? "Waiting for coordinates"
+  country: string = data?.sources.countryUrl ?? "Waiting for country code"
+  fetchedAt: string = data?.fetchedAt ?? "-"
+  refreshLabel: string = refreshing ? "refreshing" : "idle"
+  errorMessage: string = error ? String(error) : "none"
+
+view
+  section class "panel tracePanel"
+    p class "panelLabel" text "Request trace"
+    h2 text "Status {status}"
+    div class "traceRows"
+      p text "Geocoding {geocoding}"
+      p text "Forecast {forecast}"
+      p text "Country {country}"
+      p text "Fetched {fetchedAt}"
+      p text "Refresh {refreshLabel}"
+      p text "Error {errorMessage}"

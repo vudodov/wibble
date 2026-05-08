@@ -1,0 +1,51 @@
+{
+  "name": "@wibble/router",
+  "version": "0.1.0",
+  "description": "Official SPA router for Wibble.",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "clean": "node ../../scripts/clean-dist.mjs",
+    "build": "pnpm run clean && tsc -p tsconfig.json --emitDeclarationOnly && tsup src/index.ts --format esm",
+    "check": "tsc -b tsconfig.json --pretty false",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@wibble/core": "workspace:*"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vudodov/wibble.git",
+    "directory": "packages/router"
+  },
+  "homepage": "https://github.com/vudodov/wibble#readme",
+  "bugs": {
+    "url": "https://github.com/vudodov/wibble/issues"
+  },
+  "keywords": [
+    "wibble",
+    "typescript",
+    "framework",
+    "spa",
+    "compiler"
+  ],
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "engines": {
+    "node": ">=18"
+  }
+}

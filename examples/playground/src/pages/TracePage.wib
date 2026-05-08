@@ -1,0 +1,28 @@
+component TracePage
+
+use
+  import { loadCityReport } from "../api/openApis"
+  import { appStore } from "../state/appStore.wib"
+  import ApiTrace from "../components/ApiTrace.wib"
+
+resource report
+  key: ["trace-page", appStore.selectedCity.get()]
+  load: loadCityReport(appStore.selectedCity.get(), abortSignal)
+
+derived
+  selectedCity: string = appStore.selectedCity.get()
+  path: string = appStore.lastRoute.get()
+
+actions
+  async refresh()
+    invalidate report
+
+view
+  section class "pageStack"
+    section class "panel widePanel"
+      p class "panelLabel" text "Routing"
+      h2 text "{path}"
+      p text "API trace for {selectedCity}"
+    ApiTrace data report.data status report.status refreshing report.refreshing error report.error
+    button class "inlineAction" on click -> refresh
+      text "Reload trace"

@@ -1,0 +1,25 @@
+component CityControls
+
+use
+  import { appStore } from "../state/appStore.wib"
+
+derived
+  selectedCity: string = appStore.selectedCity.get()
+  cities: string[] = appStore.availableCities.get()
+  favorites: string = appStore.favoritesLabel.get()
+
+actions
+  choose(city: string)
+    appStore.selectCity(city)
+
+  toggleFavorite()
+    appStore.toggleFavorite()
+
+view
+  section class "cityBar"
+    for city in cities key city
+      button class "cityButton" on click -> choose(city)
+        text "{city}"
+    button class "refreshButton" on click -> toggleFavorite
+      text "Favorite {selectedCity}"
+    p class "cityMeta" text "Favorites {favorites}"

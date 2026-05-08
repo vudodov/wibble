@@ -1,0 +1,11 @@
+component NotFoundPage
+
+props
+  path: string
+
+view
+  section class "pageStack"
+    section class "panel widePanel"
+      p class "panelLabel" text "Not found"
+      h2 text "{path}"
+      p class "formHint" text "The router matched the configured not-found route."

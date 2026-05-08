@@ -1,0 +1,36 @@
+component CountryPanel
+
+use
+  import type { CityReport } from "../api/openApis"
+  import { numberLabel, populationDensity } from "../api/openApis"
+
+props
+  data: CityReport | undefined
+
+derived
+  flagUrl: string = data?.country.flags.svg ?? ""
+  flagAlt: string = data?.country.flags.alt ?? "Country flag"
+  countryName: string = data?.country.name ?? "Country"
+  capital: string = data?.country.capital ?? "-"
+  region: string = data ? `${data.country.region} - ${data.country.subregion}` : "-"
+  population: string = numberLabel(data?.country.population, "people")
+  area: string = numberLabel(data?.country.area, "km2")
+  density: string = populationDensity(data?.country.population, data?.country.area)
+  languages: string = data?.country.languages ?? "-"
+  currencies: string = data?.country.currencies ?? "-"
+
+view
+  section class "panel countryPanel"
+    div class "countryTopline"
+      img class "flag" src flagUrl alt flagAlt
+      div
+        p class "panelLabel" text "Country"
+        h2 text "{countryName}"
+    div class "metricGrid"
+      p text "Capital {capital}"
+      p text "Region {region}"
+      p text "Population {population}"
+      p text "Area {area}"
+      p text "Density {density}"
+      p text "Languages {languages}"
+      p text "Currencies {currencies}"
