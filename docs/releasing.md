@@ -32,7 +32,7 @@ For a brand-new package, npm may not show the package or scope in the trusted pu
 Prepare a version:
 
 ```sh
-pnpm release:version 0.1.0
+pnpm release:version 0.1.1
 pnpm install
 pnpm run ci
 ```
@@ -41,13 +41,13 @@ Commit the version changes:
 
 ```sh
 git add packages package.json pnpm-lock.yaml
-git commit -m "Release 0.1.0"
+git commit -m "Release 0.1.1"
 ```
 
 Create and push a tag:
 
 ```sh
-git tag v0.1.0
+git tag v0.1.1
 git push origin main --tags
 ```
 
