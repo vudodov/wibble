@@ -1,6 +1,6 @@
 # Components
 
-Wibble components are `.wib` files with ordered sections: `use`, `props`, `state`, `derived`, `resource`, `actions`, and `view`.
+Wibble components are `.wib` files with ordered sections: `use`, `props`, `state`, `derived`, `resource`, `actions`, `effects`, and `view`.
 
 The compiler now lowers the view section into typed view nodes for:
 
@@ -45,10 +45,31 @@ view
   input type "file" bind files form.fields.attachments
 ```
 
+Classes are explicit directives. A quoted class list is emitted as a static class binding; an expression is emitted as a reactive binding. The same directive is forwarded as a `class` prop when used on an imported component.
+
+```wibble
+derived
+  panelClass: string = compact ? "panel panelCompact" : "panel"
+
+view
+  section class panelClass
+    text "Dynamic class"
+  Card class "panelCard" title title
+```
+
+Very long quoted class lists produce a `WIB_LONG_CLASS` warning. Utility CSS is still usable, but Wibble nudges repeated or hard-to-review class chains toward named classes, derived class expressions, or Wibble UI variants.
+
 When a component needs an explicit DOM reference, use a named ref instead of query selectors:
 
 ```wibble
 view
   div ref panelRef
     text "Panel"
+```
+
+Effects are supported for synchronous reactive side effects that are not data fetching and do not mutate Wibble state directly. API reads belong in `resource`; state writes belong in `actions`.
+
+```wibble
+effects
+  console.log("Selected", selectedId)
 ```

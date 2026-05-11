@@ -6,7 +6,7 @@ This repository is prepared to publish the Wibble workspace packages to npm from
 
 1. Create the GitHub repository.
 2. Update package metadata if the repository owner or name differs from `wibble-js/wibble-js`.
-3. Decide the project license and update `license` in every publishable package. The current value is `UNLICENSED` so the legal choice stays explicit.
+3. Review the project license. Packages are configured as `MIT` and the repository includes an MIT `LICENSE` file.
 4. Reserve or verify the npm scope used by package names, currently `@wibble`.
 5. Configure npm publishing.
 

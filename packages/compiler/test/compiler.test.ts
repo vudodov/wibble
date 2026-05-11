@@ -90,6 +90,60 @@ actions
     expect(result.code).toContain("export const appStore = AppStore.create();");
   });
 
+  it("emits effects instead of silently ignoring them", () => {
+    const result = compileWib(`component Watched
+
+state
+  count: number = 0
+
+effects
+  console.log("count", count)
+
+view
+  text "Ready"
+`);
+
+    expect(result.diagnostics).toEqual([]);
+    expect(result.code).toContain("effect((onCleanup) => {");
+    expect(result.code).toContain("console.log(\"count\", count.get());");
+    expect(result.code).not.toContain("\"count.get()\"");
+  });
+
+  it("does not rewrite identifiers inside string literals", () => {
+    const result = compileWib(`component Strings
+
+props
+  label: string
+
+state
+  count: number = 0
+
+derived
+  message: string = label === "count" ? label : "label"
+
+view
+  text "{message}"
+`);
+
+    expect(result.diagnostics).toEqual([]);
+    expect(result.code).toContain("read(__props.label) === \"count\"");
+    expect(result.code).toContain(": \"label\"");
+  });
+
+  it("rejects async work in effects", () => {
+    const result = compileWib(`component AsyncEffect
+
+effects
+  await load()
+
+view
+  text "Ready"
+`);
+
+    expect(result.diagnostics.some((diagnostic) => diagnostic.code === "WIB_EFFECT_ASYNC")).toBe(true);
+    expect(result.code).toBe("");
+  });
+
   it("emits conditionals, keyed lists, slots, and form bindings", () => {
     const result = compileWib(`component Rich
 
@@ -142,6 +196,42 @@ view
     expect(result.code).toContain("bindInput");
     expect(result.code).toContain("bindRadioGroup");
     expect(result.code).toContain("bindFiles");
+  });
+
+  it("forwards class directives to components deliberately", () => {
+    const result = compileWib(`component Parent
+
+use
+  import Child from "./Child.wib"
+
+view
+  Child class "panel compact" tone "info"
+`);
+
+    expect(result.diagnostics).toEqual([]);
+    expect(result.code).toContain("renderComponent(Child, { class: \"panel compact\", tone: \"info\" })");
+  });
+
+  it("diagnoses invalid view syntax instead of dropping the line", () => {
+    const result = compileWib(`component BadView
+
+view
+  @missing
+`);
+
+    expect(result.diagnostics.some((diagnostic) => diagnostic.code === "WIB_VIEW_SYNTAX")).toBe(true);
+    expect(result.code).toBe("");
+  });
+
+  it("warns when static class lists become hard to review", () => {
+    const result = compileWib(`component UtilityWall
+
+view
+  div class "one two three four five six seven eight nine ten eleven"
+`);
+
+    expect(result.diagnostics.some((diagnostic) => diagnostic.code === "WIB_LONG_CLASS")).toBe(true);
+    expect(result.code).toContain("bindAttr");
   });
 
   it("emits refs as explicit Wibble DOM escape hatches", () => {

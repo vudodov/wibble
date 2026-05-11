@@ -22,7 +22,7 @@
   "peerDependencies": {
     "vite": "^6.0.0"
   },
-  "license": "UNLICENSED",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wibble-js/wibble-js.git",

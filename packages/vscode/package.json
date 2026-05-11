@@ -47,7 +47,7 @@
     "check": "node -e \"console.log('No VS Code extension typecheck yet')\"",
     "test": "node -e \"console.log('No VS Code extension tests yet')\""
   },
-  "license": "UNLICENSED",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wibble-js/wibble-js.git",

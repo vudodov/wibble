@@ -1,6 +1,7 @@
 import type { Diagnostic, WibDocument, WibSection } from "./ast";
 import { validateHtmlLine } from "./htmlSchema";
 import { declarationNames, getSection, getSections, parseDeclarations, parseResourceShape } from "./inspect";
+import { parseViewTree } from "./view";
 
 function diagnostic(
   ast: WibDocument,
@@ -28,12 +29,55 @@ function hasAssignmentTo(text: string, names: readonly string[]): string | undef
   return names.find((name) => new RegExp(`\\b${name}\\s*=`).test(text));
 }
 
+function collectImportedComponents(ast: WibDocument): Set<string> {
+  const components = new Set<string>();
+
+  for (const section of getSections(ast, "use")) {
+    for (const line of section.lines) {
+      const raw = line.text.trim();
+      const defaultImport = /^import\s+([A-Z][A-Za-z0-9_]*)\s+from\s+/.exec(raw);
+      if (defaultImport) {
+        components.add(defaultImport[1] ?? "");
+      }
+
+      if (raw.startsWith("import type")) {
+        continue;
+      }
+
+      const namedImport = /^import\s+\{([^}]+)\}\s+from\s+/.exec(raw);
+      if (namedImport) {
+        for (const part of (namedImport[1] ?? "").split(",")) {
+          const name = part.trim().split(/\s+as\s+/).pop()?.trim();
+          if (name && /^[A-Z]/.test(name)) {
+            components.add(name);
+          }
+        }
+      }
+    }
+  }
+
+  return components;
+}
+
+function classLiterals(text: string): Array<{ value: string; column: number }> {
+  return [...text.matchAll(/\bclass\s+"((?:\\.|[^"\\])*)"/g)].map((match) => ({
+    value: match[1] ?? "",
+    column: Math.max(1, (match.index ?? 0) + 1)
+  }));
+}
+
 export function validateWib(ast: WibDocument): Diagnostic[] {
   const diagnostics: Diagnostic[] = [];
   const props = parseDeclarations(getSection(ast, "props"));
   const state = parseDeclarations(getSection(ast, "state"));
   const stateNames = declarationNames(state);
   const propNames = declarationNames(props);
+  const view = getSection(ast, "view");
+
+  diagnostics.push(...parseViewTree(view, { components: collectImportedComponents(ast) }).diagnostics.map((viewDiagnostic) => ({
+    ...viewDiagnostic,
+    filename: ast.filename
+  })));
 
   for (const section of ast.sections) {
     if (section.kind === "view" || section.kind === "derived") {
@@ -52,6 +96,16 @@ export function validateWib(ast: WibDocument): Diagnostic[] {
 
     if (section.kind === "effects") {
       for (const line of section.lines) {
+        if (/\bawait\b/.test(line.text)) {
+          diagnostics.push(diagnostic(
+            ast,
+            "WIB_EFFECT_ASYNC",
+            "error",
+            "Effects are synchronous; move async work into a resource or action.",
+            line.line
+          ));
+        }
+
         if (hasApiCall(line.text)) {
           diagnostics.push(diagnostic(
             ast,
@@ -92,12 +146,26 @@ export function validateWib(ast: WibDocument): Diagnostic[] {
     }
   }
 
-  for (const line of getSection(ast, "view")?.lines ?? []) {
+  for (const line of view?.lines ?? []) {
     const text = line.text.trim();
     diagnostics.push(...validateHtmlLine(line).map((htmlDiagnostic) => ({
       ...htmlDiagnostic,
       filename: ast.filename
     })));
+
+    for (const classLiteral of classLiterals(text)) {
+      const classCount = classLiteral.value.trim().split(/\s+/).filter(Boolean).length;
+      if (classLiteral.value.length > 96 || classCount > 10) {
+        diagnostics.push(diagnostic(
+          ast,
+          "WIB_LONG_CLASS",
+          "warning",
+          "Long static class lists are hard to review; prefer a named class, derived class expression, or Wibble UI variant.",
+          line.line,
+          classLiteral.column
+        ));
+      }
+    }
 
     if (text.startsWith("for ") && !/\skey\s+/.test(text)) {
       diagnostics.push(diagnostic(
@@ -105,17 +173,6 @@ export function validateWib(ast: WibDocument): Diagnostic[] {
         "WIB_LIST_KEY",
         "error",
         "List blocks must declare a stable key.",
-        line.line
-      ));
-    }
-
-    const slot = /^slot(?:\s+(.+))?$/.exec(text);
-    if (slot && !/^[A-Za-z_][A-Za-z0-9_]*$/.test(slot[1] ?? "")) {
-      diagnostics.push(diagnostic(
-        ast,
-        "WIB_SLOT_NAME",
-        "error",
-        "Slot blocks must declare a simple slot name, for example `slot actions`.",
         line.line
       ));
     }
