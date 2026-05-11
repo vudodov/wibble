@@ -1,6 +1,6 @@
 {
   "name": "@wibble/http",
-  "version": "0.0.0",
+  "version": "0.1.1",
   "description": "Typed HTTP client primitives for Wibble resources and actions.",
   "type": "module",
   "sideEffects": false,

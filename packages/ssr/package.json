@@ -1,6 +1,6 @@
 {
   "name": "@wibble/ssr",
-  "version": "0.0.0",
+  "version": "0.1.1",
   "description": "Server rendering helpers for Wibble.",
   "type": "module",
   "sideEffects": false,
