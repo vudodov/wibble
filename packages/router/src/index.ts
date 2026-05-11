@@ -2,8 +2,8 @@ import {
   createResource,
   createScope,
   effect,
-  normalizeNodes,
   read,
+  renderComponent,
   signal,
   type Component,
   type MaybeReadable,
@@ -321,7 +321,7 @@ function componentFor(route: Route): Component<RouteContext & { slots?: WibbleSl
 }
 
 function renderRouteChain(match: RouteMatch): Node[] {
-  let rendered = normalizeNodes(componentFor(match.route)(match.context));
+  let rendered = renderComponent(componentFor(match.route), match.context);
 
   for (let index = match.chain.length - 2; index >= 0; index -= 1) {
     const route = match.chain[index];
@@ -330,12 +330,12 @@ function renderRouteChain(match: RouteMatch): Node[] {
     }
 
     const childNodes = rendered;
-    rendered = normalizeNodes(componentFor(route)({
+    rendered = renderComponent(componentFor(route), {
       ...match.context,
       slots: {
         default: () => childNodes
       }
-    }));
+    });
   }
 
   return rendered;
@@ -349,7 +349,9 @@ function renderRouteError(match: RouteMatch, error: unknown): Node[] {
 
   const index = match.chain.length - 1 - errorIndex;
   const route = match.chain[index];
-  let rendered = normalizeNodes(route?.errorComponent?.({ ...match.context, error }) ?? []);
+  let rendered = route?.errorComponent
+    ? renderComponent(route.errorComponent, { ...match.context, error })
+    : [];
 
   for (let parentIndex = index - 1; parentIndex >= 0; parentIndex -= 1) {
     const parent = match.chain[parentIndex];
@@ -358,12 +360,12 @@ function renderRouteError(match: RouteMatch, error: unknown): Node[] {
     }
 
     const childNodes = rendered;
-    rendered = normalizeNodes(componentFor(parent)({
+    rendered = renderComponent(componentFor(parent), {
       ...match.context,
       slots: {
         default: () => childNodes
       }
-    }));
+    });
   }
 
   return rendered;

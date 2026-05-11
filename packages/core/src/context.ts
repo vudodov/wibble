@@ -1,18 +1,27 @@
-import { getCurrentScope } from "./reactivity";
+import { getCurrentScope, type Scope } from "./reactivity";
 
 export interface ContextToken<T> {
   readonly name: string;
   readonly id: symbol;
 }
 
-const stack: Array<Map<symbol, unknown>> = [];
+type ContextFrame = Map<symbol, unknown>;
+export type ContextSnapshot = ReadonlyMap<symbol, unknown>;
+
+const scopeFrames = new WeakMap<Scope, ContextFrame>();
+let currentFrame: ContextFrame | undefined;
+
+function activeFrame(): ContextFrame | undefined {
+  const scope = getCurrentScope();
+  return currentFrame ?? (scope ? scopeFrames.get(scope) : undefined);
+}
 
 export function createContext<T>(name: string): ContextToken<T> {
   return { name, id: Symbol(name) };
 }
 
 export function provide<T>(token: ContextToken<T>, value: T): void {
-  const frame = stack.at(-1);
+  const frame = activeFrame();
   if (!frame) {
     throw new Error(`Cannot provide ${token.name} outside a Wibble component scope.`);
   }
@@ -21,34 +30,36 @@ export function provide<T>(token: ContextToken<T>, value: T): void {
 }
 
 export function useContext<T>(token: ContextToken<T>): T {
-  for (let index = stack.length - 1; index >= 0; index -= 1) {
-    const frame = stack[index];
-    if (frame?.has(token.id)) {
-      return frame.get(token.id) as T;
-    }
+  const frame = activeFrame();
+  if (frame?.has(token.id)) {
+    return frame.get(token.id) as T;
   }
 
   throw new Error(`Missing Wibble context provider for ${token.name}.`);
 }
 
-export function withContextFrame<T>(work: () => T): T {
-  const parent = stack.at(-1);
-  const frame = new Map(parent);
-  stack.push(frame);
+export function captureContextFrame(): ContextSnapshot | undefined {
+  const frame = activeFrame();
+  return frame ? new Map(frame) : undefined;
+}
 
+export function withContextFrame<T>(work: () => T, parentFrame: ContextSnapshot | undefined = activeFrame()): T {
+  const frame = new Map(parentFrame);
+  const previous = currentFrame;
   const scope = getCurrentScope();
-  scope?.add(() => {
-    const index = stack.indexOf(frame);
-    if (index >= 0) {
-      stack.splice(index, 1);
-    }
-  });
+  currentFrame = frame;
+  if (scope) {
+    scopeFrames.set(scope, frame);
+    scope.add(() => {
+      if (scopeFrames.get(scope) === frame) {
+        scopeFrames.delete(scope);
+      }
+    });
+  }
 
   try {
     return work();
   } finally {
-    if (stack.at(-1) === frame) {
-      stack.pop();
-    }
+    currentFrame = previous;
   }
 }

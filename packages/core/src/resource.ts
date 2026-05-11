@@ -60,7 +60,7 @@ const inflight = new Map<string, Inflight<unknown>>();
 const cache = new Map<string, CacheEntry<unknown>>();
 
 export function stableResourceKey(key: ResourceKey): string {
-  return JSON.stringify(key);
+  return JSON.stringify(key) ?? String(key);
 }
 
 export function invalidateResourceCache(match?: ResourceKey | string | ((key: string) => boolean)): void {
@@ -88,7 +88,8 @@ export function createResource<T>(options: ResourceOptions<T>): Resource<T> {
   const refreshing = signal(false);
   const key = signal(stableResourceKey(options.key()));
   let version = 0;
-  let localController: AbortController | undefined;
+  let activeRequestKey: string | undefined;
+  let ownedController: AbortController | undefined;
   const staleTime = options.staleTime ?? 0;
   const retry = options.retry ?? 0;
 
@@ -121,25 +122,39 @@ export function createResource<T>(options: ResourceOptions<T>): Resource<T> {
     refreshing.set(nextStatus === "refreshing");
   });
 
-  async function reload(): Promise<T | undefined> {
+  function abortOwnedRequest(): void {
+    ownedController?.abort();
+    ownedController = undefined;
+  }
+
+  async function runLoad(force: boolean): Promise<T | undefined> {
     const requestVersion = ++version;
     const requestKey = key.peek();
     const cached = cache.get(requestKey) as CacheEntry<T> | undefined;
-    if (cached && Date.now() - cached.updatedAt <= staleTime) {
+    if (!force && cached && Date.now() - cached.updatedAt <= staleTime) {
       data.set(cached.data);
       status.set("ready");
       return cached.data;
     }
 
-    localController?.abort();
-    localController = new AbortController();
+    if (activeRequestKey && activeRequestKey !== requestKey) {
+      abortOwnedRequest();
+    }
+    activeRequestKey = requestKey;
+
+    if (force) {
+      inflight.get(requestKey)?.controller.abort();
+      inflight.delete(requestKey);
+      abortOwnedRequest();
+    }
 
     error.set(undefined);
     status.set(data.peek() === undefined ? "loading" : "refreshing");
 
-    let entry = inflight.get(requestKey) as Inflight<T> | undefined;
+    let entry = force ? undefined : inflight.get(requestKey) as Inflight<T> | undefined;
     if (!entry) {
-      const controller = localController;
+      const controller = new AbortController();
+      ownedController = controller;
       const promise = untracked(() => loadWithRetry({ signal: controller.signal }, retry));
       entry = { controller, promise };
       inflight.set(requestKey, entry as Inflight<unknown>);
@@ -147,28 +162,35 @@ export function createResource<T>(options: ResourceOptions<T>): Resource<T> {
         if (inflight.get(requestKey) === entry) {
           inflight.delete(requestKey);
         }
+        if (ownedController === controller) {
+          ownedController = undefined;
+        }
       }).catch(() => undefined);
     }
 
     try {
       const result = await entry.promise;
-      if (requestVersion === version) {
+      if (requestVersion === version && key.peek() === requestKey) {
         cache.set(requestKey, { data: result, updatedAt: Date.now() });
         data.set(result);
         status.set("ready");
       }
       return result;
     } catch (reason) {
-      if (entry.controller.signal.aborted || localController?.signal.aborted) {
+      if (entry.controller.signal.aborted) {
         return data.peek();
       }
 
-      if (requestVersion === version) {
+      if (requestVersion === version && key.peek() === requestKey) {
         error.set(new ResourceError(requestKey, reason));
         status.set("error");
       }
       return undefined;
     }
+  }
+
+  async function reload(): Promise<T | undefined> {
+    return runLoad(false);
   }
 
   async function loadWithRetry(context: ResourceContext, attempts: number): Promise<T> {
@@ -197,7 +219,7 @@ export function createResource<T>(options: ResourceOptions<T>): Resource<T> {
     reload,
     invalidate() {
       cache.delete(key.peek());
-      return reload();
+      return runLoad(true);
     }
   };
 }

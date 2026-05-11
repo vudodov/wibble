@@ -1,5 +1,5 @@
 import { createScope, effect, getCurrentScope, onScopeDispose, type Dispose, type Readable, type Scope } from "./reactivity";
-import { withContextFrame } from "./context";
+import { captureContextFrame, withContextFrame, type ContextSnapshot } from "./context";
 
 /** A Wibble component accepts typed props and returns one or more DOM nodes. */
 export type Component<P = Record<string, never>> = (props: P) => Node | Node[];
@@ -35,6 +35,10 @@ export interface PortalHandle {
 /** A literal value, signal-like readable, or function that can be read reactively. */
 export type MaybeReadable<T> = T | Readable<T> | (() => T);
 
+function renderInScope(scope: Scope, render: () => Node | Node[], parentFrame: ContextSnapshot | undefined): Node[] {
+  return scope.run(() => withContextFrame(() => normalizeNodes(render()), parentFrame));
+}
+
 /** Reads literals, functions, and Wibble readables through one common API. */
 export function read<T>(value: MaybeReadable<T>): T {
   if (typeof value === "function") {
@@ -51,7 +55,7 @@ export function read<T>(value: MaybeReadable<T>): T {
 /** Mounts a Wibble component into a DOM target and owns its cleanup scope. */
 export function mount<P>(component: Component<P>, target: Element, props: P): MountHandle {
   const scope = createScope();
-  const nodes = scope.run(() => withContextFrame(() => normalizeNodes(component(props))));
+  const nodes = renderInScope(scope, () => component(props), undefined);
   target.replaceChildren(...nodes);
 
   return {
@@ -186,7 +190,10 @@ export function renderComponent<P extends { slots?: WibbleSlots }>(
   component: Component<P>,
   props: Omit<P, "slots"> & { slots?: WibbleSlots }
 ): Node[] {
-  return normalizeNodes(component(props as P));
+  const parentFrame = captureContextFrame();
+  const scope = createScope();
+  getCurrentScope()?.add(() => scope.dispose());
+  return renderInScope(scope, () => component(props as P), parentFrame);
 }
 
 /** Renders a named slot or fallback content. */
@@ -197,8 +204,9 @@ export function renderSlot(slots: WibbleSlots | undefined, name: string, fallbac
 
 /** Renders nodes into a target outside the current component tree and cleans them up with scope disposal. */
 export function renderPortal(target: Element, render: () => Node | Node[]): PortalHandle {
+  const parentFrame = captureContextFrame();
   const scope = createScope();
-  const nodes = scope.run(() => normalizeNodes(render()));
+  const nodes = renderInScope(scope, render, parentFrame);
   target.append(...nodes);
 
   const handle: PortalHandle = {
@@ -227,8 +235,9 @@ export function conditional(parent: ParentNode, render: () => Node | Node[]): Di
       node.parentNode?.removeChild(node);
     }
 
+    const parentFrame = captureContextFrame();
     scope = createScope();
-    nodes = scope.run(() => normalizeNodes(render()));
+    nodes = renderInScope(scope, render, parentFrame);
     for (const node of nodes) {
       parent.insertBefore(node, marker);
     }
@@ -269,6 +278,13 @@ export function keyedEach<T, K>(
   parent.append(marker);
   const records = new Map<K, KeyedItem<T>>();
 
+  function createRecord(item: T): KeyedItem<T> {
+    const parentFrame = captureContextFrame();
+    const scope = createScope();
+    const nodes = renderInScope(scope, () => render(item), parentFrame);
+    return { scope, nodes, value: item };
+  }
+
   function disposeRecords(): void {
     for (const record of records.values()) {
       record.scope.dispose();
@@ -286,20 +302,31 @@ export function keyedEach<T, K>(
 
     for (const item of nextItems) {
       const key = keyOf(item);
+      if (nextRecords.has(key)) {
+        throw new Error(`Duplicate key \`${String(key)}\` in Wibble keyed list.`);
+      }
+
       const existing = records.get(key);
 
       if (existing) {
-        existing.value = item;
-        nextRecords.set(key, existing);
-        nextNodes.push(...existing.nodes);
+        if (Object.is(existing.value, item)) {
+          nextRecords.set(key, existing);
+          nextNodes.push(...existing.nodes);
+        } else {
+          existing.scope.dispose();
+          for (const node of existing.nodes) {
+            node.parentNode?.removeChild(node);
+          }
+          const nextRecord = createRecord(item);
+          nextRecords.set(key, nextRecord);
+          nextNodes.push(...nextRecord.nodes);
+        }
         continue;
       }
 
-      const scope = createScope();
-      const nodes = scope.run(() => normalizeNodes(render(item)));
-      const record = { scope, nodes, value: item };
+      const record = createRecord(item);
       nextRecords.set(key, record);
-      nextNodes.push(...nodes);
+      nextNodes.push(...record.nodes);
     }
 
     for (const [key, record] of records) {
@@ -353,8 +380,9 @@ export function asyncBoundary<T>(parent: ParentNode, options: AsyncBoundaryOptio
       node.parentNode?.removeChild(node);
     }
 
+    const parentFrame = captureContextFrame();
     scope = createScope();
-    nodes = scope.run(() => normalizeNodes(render()));
+    nodes = renderInScope(scope, render, parentFrame);
     for (const node of nodes) {
       parent.insertBefore(node, marker);
     }

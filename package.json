@@ -1,7 +1,7 @@
 {
   "name": "wibble-js",
   "private": true,
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Wibble is an experimental TypeScript-first SPA framework with a manifest-like DSL and fine-grained rendering.",
   "type": "module",
   "packageManager": "pnpm@9.15.4",

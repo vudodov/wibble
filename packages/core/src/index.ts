@@ -27,10 +27,12 @@ export {
 } from "./resource";
 
 export {
+  captureContextFrame,
   createContext,
   provide,
   useContext,
   withContextFrame,
+  type ContextSnapshot,
   type ContextToken
 } from "./context";
 

@@ -1,6 +1,6 @@
 {
   "name": "@wibble/store",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Official typed store primitives for Wibble.",
   "type": "module",
   "sideEffects": false,
