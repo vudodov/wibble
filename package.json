@@ -19,7 +19,7 @@
     "release:publish": "node scripts/publish-packages.mjs"
   },
   "devDependencies": {
-    "@types/node": "^20.17.10",
+    "@types/node": "^25.8.0",
     "@vitest/browser": "^2.1.8",
     "playwright": "^1.49.1",
     "tsup": "^8.3.5",
