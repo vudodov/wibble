@@ -21,7 +21,7 @@
   "devDependencies": {
     "@types/node": "^20.17.10",
     "@vitest/browser": "^2.1.8",
-    "playwright": "^1.49.1",
+    "playwright": "^1.60.0",
     "tsup": "^8.3.5",
     "typescript": "^5.7.2",
     "vite": "^6.0.3",
